@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Building } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useNotification } from '../../contexts/NotificationContext';
+import { Button } from '../ui/Button';
+import { Input } from '../ui/Input';
 
 interface OwnerLoginProps {
   onSwitchToEmployee: () => void;
 }
 
 export function OwnerLogin({ onSwitchToEmployee }: OwnerLoginProps) {
+  const { error: showError, success: showSuccess } = useNotification();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
       if (isSignUp) {
@@ -40,6 +42,7 @@ export function OwnerLogin({ onSwitchToEmployee }: OwnerLoginProps) {
             ]);
 
           if (businessError) throw businessError;
+          showSuccess('Account Created', 'Your business account has been created successfully!');
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -48,9 +51,10 @@ export function OwnerLogin({ onSwitchToEmployee }: OwnerLoginProps) {
         });
 
         if (error) throw error;
+        showSuccess('Welcome Back', 'You have been logged in successfully!');
       }
     } catch (err: any) {
-      setError(err.message);
+      showError('Authentication Error', err.message);
     } finally {
       setLoading(false);
     }
@@ -67,87 +71,49 @@ export function OwnerLogin({ onSwitchToEmployee }: OwnerLoginProps) {
         </div>
 
         <form className="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
 
           {isSignUp && (
-            <div>
-              <label htmlFor="businessName" className="block text-sm font-medium text-gray-700">
-                Business Name
-              </label>
-              <div className="mt-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Building className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="businessName"
-                  name="businessName"
-                  type="text"
-                  required={isSignUp}
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  className="pl-10 block w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter your business name"
-                />
-              </div>
-            </div>
+            <Input
+              label="Business Name"
+              type="text"
+              icon={<Building className="h-5 w-5" />}
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+              placeholder="Enter your business name"
+              required
+            />
           )}
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email Address
-            </label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 block w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your email"
-              />
-            </div>
-          </div>
+          <Input
+            label="Email Address"
+            type="email"
+            icon={<Mail className="h-5 w-5" />}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            required
+          />
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 block w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your password"
-                minLength={6}
-              />
-            </div>
-          </div>
+          <Input
+            label="Password"
+            type="password"
+            icon={<Lock className="h-5 w-5" />}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            minLength={6}
+            required
+          />
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Please wait...' : (isSignUp ? 'Create Business' : 'Sign In')}
-            </button>
-          </div>
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            loading={loading}
+            className="w-full"
+          >
+            {isSignUp ? 'Create Business' : 'Sign In'}
+          </Button>
 
           <div className="text-center space-y-2">
             <button

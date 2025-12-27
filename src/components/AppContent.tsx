@@ -1,39 +1,24 @@
 import React, { useState } from 'react';
-import { AuthProvider } from './contexts/AuthContext';
-import { NotificationProvider } from './contexts/NotificationContext';
-import { AppContent } from './components/AppContent';
+import { useAuth } from '../contexts/AuthContext';
+import { OwnerLogin } from './auth/OwnerLogin';
+import { EmployeeLogin } from './auth/EmployeeLogin';
+import { Navbar } from './layout/Navbar';
+import { Dashboard } from './dashboard/Dashboard';
+import { POS } from './pos/POS';
+import { Inventory } from './inventory/Inventory';
+import { StaffManagement } from './staff/StaffManagement';
+import { Settings } from './settings/Settings';
+import { SalesHistory } from './sales/SalesHistory';
+import { Analytics } from './analytics/Analytics';
+import { PageLoader } from './ui/LoadingSpinner';
 
-function App() {
-  return (
-    <AuthProvider>
-      <NotificationProvider>
-        <AppContent />
-      </NotificationProvider>
-    </AuthProvider>
-  );
-}
-
-export default App;
-import { OwnerLogin } from './components/auth/OwnerLogin';
-import { EmployeeLogin } from './components/auth/EmployeeLogin';
-import { Navbar } from './components/layout/Navbar';
-import { Dashboard } from './components/dashboard/Dashboard';
-import { POS } from './components/pos/POS';
-import { Inventory } from './components/inventory/Inventory';
-import { StaffManagement } from './components/staff/StaffManagement';
-import { Settings } from './components/settings/Settings';
-
-function App() {
+export function AppContent() {
   const { user, business, employee, loading, isOwner, isEmployee } = useAuth();
   const [loginType, setLoginType] = useState<'owner' | 'employee'>('owner');
   const [currentPage, setCurrentPage] = useState('dashboard');
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   // Show login page if not authenticated
@@ -72,17 +57,19 @@ function App() {
         return <StaffManagement />;
       case 'settings':
         return <Settings />;
+      case 'sales':
+        return <SalesHistory />;
+      case 'analytics':
+        return <Analytics />;
       default:
         return <Dashboard />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Navbar currentPage={currentPage} onPageChange={setCurrentPage} />
-      <main>{renderCurrentPage()}</main>
+      <main className="transition-all duration-300">{renderCurrentPage()}</main>
     </div>
   );
 }
-
-export default App;
