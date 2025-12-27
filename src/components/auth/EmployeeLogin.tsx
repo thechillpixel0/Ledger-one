@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building, User, Lock } from 'lucide-react';
+import { Building, User, Lock, AlertCircle } from 'lucide-react';
 import { supabase, Business } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, CreditCard as Edit, Trash2, Users, ToggleLeft, ToggleRight } from 'lucide-react';
 import { supabase, Employee } from '../../lib/supabase';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 
 export function StaffManagement() {
   const { business } = useAuth();

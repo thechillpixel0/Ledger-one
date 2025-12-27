@@ -23,6 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const refreshAuth = async () => {
+    setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       
