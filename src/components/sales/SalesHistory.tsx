@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, DollarSign, User, Filter, Download, Eye } from 'lucide-react';
-import { supabase, Transaction, TransactionItem } from '../lib/supabase';
+import { supabase, Transaction, TransactionItem } from '../../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { Button } from '../ui/Button';
